@@ -1,10 +1,13 @@
 package util
 
 import (
+	"context"
 	"fmt"
 	"log"
 
+	v1alpha3 "istio.io/client-go/pkg/apis/networking/v1alpha3"
 	versionedclient "istio.io/client-go/pkg/clientset/versioned"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/rest"
 )
 
@@ -42,8 +45,8 @@ func (i *IstioClient) Expore() {
 
 }
 
-func (i *IstioClient) GetGateways() {
-
+func (i *IstioClient) GetGateways() (*v1alpha3.GatewayList, error) {
+	return i.istioClient.NetworkingV1alpha3().Gateways(i.ns).List(context.TODO(), v1.ListOptions{})
 }
 
 func (i *IstioClient) GetVirtualServices() {
