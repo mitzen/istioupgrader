@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/util/homedir"
 )
@@ -12,7 +13,7 @@ import (
 type ClientConfig struct {
 }
 
-func (c *ClientConfig) New() *kubernetes.Clientset {
+func (c *ClientConfig) NewConfig() *rest.Config {
 
 	var kubeconfig *string
 
@@ -28,8 +29,13 @@ func (c *ClientConfig) New() *kubernetes.Clientset {
 	if err != nil {
 		panic(err)
 	}
+	return config
+}
+
+func (c *ClientConfig) NewClient(config *rest.Config) *kubernetes.Clientset {
 
 	clientset, err := kubernetes.NewForConfig(config)
+
 	if err != nil {
 		panic(err)
 	}

@@ -11,17 +11,20 @@ import (
 func main() {
 
 	cfg := config.ClientConfig{}
-	clientset := cfg.New()
+	restConfig := cfg.NewConfig()
+	clientset := cfg.NewClient(restConfig)
+
+	ic := util.IstioClient{}
+
+	ic.New(restConfig, apiv1.NamespaceAll)
+	ic.GetVersionInfo()
 
 	nsutil := util.KubeNamespace{}
-
 	namespaces, nserr := nsutil.ListAllNamespace(clientset)
 
 	if nserr != nil {
 		fmt.Println("")
 	}
-
-	fmt.Println("Outputing namespace")
 
 	for _, n := range namespaces.Items {
 		fmt.Println(n.Name)
@@ -30,6 +33,6 @@ func main() {
 	deploymentsClient := clientset.AppsV1().Deployments(apiv1.NamespaceDefault)
 
 	if deploymentsClient != nil {
-		fmt.Println("ok all good")
+		fmt.Println("")
 	}
 }
