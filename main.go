@@ -17,17 +17,10 @@ func main() {
 	ic := util.IstioClient{}
 	ic.New(restConfig, apiv1.NamespaceAll)
 
-	iv, e := ic.GetIstioControlVersion()
+	istioControlVersion := ic.GetIstioControlVersion()
+	istioPodVersion := ic.GetIstioPod("default")
+	fmt.Printf("Istiond version: %s, IstioPod version:%s ", istioControlVersion, istioPodVersion)
 
-	if e != nil {
-		fmt.Printf("unable to get version istiod")
-	}
-
-	for _, v := range *iv {
-		fmt.Printf("%s - serverinfo", v.Info.Version)
-	}
-
-	fmt.Printf("%s", iv)
 	nsutil := util.KubeNamespace{}
 	namespaces, nserr := nsutil.ListAllNamespace(clientset)
 
