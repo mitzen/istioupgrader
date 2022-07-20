@@ -8,6 +8,7 @@ import (
 	v1alpha3 "istio.io/client-go/pkg/apis/networking/v1alpha3"
 	versionedclient "istio.io/client-go/pkg/clientset/versioned"
 	"istio.io/istio/pkg/kube"
+	"istio.io/pkg/version"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/rest"
 )
@@ -42,8 +43,9 @@ func (i *IstioClient) GetVersionInfo() {
 	fmt.Printf("Istio version: %s.%s \n", sv.Major, sv.Minor)
 }
 
-func (i *IstioClient) Expore(ic kube.ExtendedClient) {
-	ic.GetIstioVersions(context.TODO(), "")
+func (i *IstioClient) GetIstioControlVersion(ic kube.ExtendedClient, namespace string) (*version.MeshInfo, error) {
+	mvi, err := ic.GetIstioVersions(context.TODO(), namespace)
+	return mvi, err
 }
 
 func (i *IstioClient) GetGateways() (*v1alpha3.GatewayList, error) {

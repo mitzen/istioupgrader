@@ -8,12 +8,15 @@ import (
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/util/homedir"
+
+	"istio.io/istio/pkg/kube"
 )
 
 type ClientConfig struct {
+	kubeconfig *string
 }
 
-func (c *ClientConfig) NewConfig() *rest.Config {
+func (c *ClientConfig) initKubeConfig() {
 
 	var kubeconfig *string
 
@@ -22,9 +25,16 @@ func (c *ClientConfig) NewConfig() *rest.Config {
 	} else {
 		kubeconfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
 	}
-	flag.Parse()
 
-	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
+	flag.Parse()
+	c.kubeconfig = kubeconfig
+}
+
+func (c *ClientConfig) NewConfig() *rest.Config {
+
+	c.initKubeConfig()
+
+	config, err := clientcmd.BuildConfigFromFlags("", *c.kubeconfig)
 
 	if err != nil {
 		panic(err)
@@ -41,4 +51,11 @@ func (c *ClientConfig) NewClient(config *rest.Config) *kubernetes.Clientset {
 	}
 
 	return clientset
+}
+
+func (c *ClientConfig) NewExtendedClient(config *rest.Config) (kube.ExtendedClient, error) {
+
+	c.initKubeConfig()
+	cc, err := kube.NewExtendedClient(kube.BuildClientCmd(*c.kubeconfig, ""), "")
+	return cc, err
 }
