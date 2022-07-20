@@ -33,7 +33,6 @@ func (c *ClientConfig) initKubeConfig() {
 func (c *ClientConfig) NewConfig() *rest.Config {
 
 	c.initKubeConfig()
-
 	config, err := clientcmd.BuildConfigFromFlags("", *c.kubeconfig)
 
 	if err != nil {
@@ -45,7 +44,6 @@ func (c *ClientConfig) NewConfig() *rest.Config {
 func (c *ClientConfig) NewClient(config *rest.Config) *kubernetes.Clientset {
 
 	clientset, err := kubernetes.NewForConfig(config)
-
 	if err != nil {
 		panic(err)
 	}
@@ -54,7 +52,6 @@ func (c *ClientConfig) NewClient(config *rest.Config) *kubernetes.Clientset {
 }
 
 func (c *ClientConfig) NewExtendedClient(config *rest.Config) (kube.ExtendedClient, error) {
-
 	c.initKubeConfig()
 	cc, err := kube.NewExtendedClient(kube.BuildClientCmd(*c.kubeconfig, ""), "")
 	return cc, err

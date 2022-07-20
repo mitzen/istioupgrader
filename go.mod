@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	github.com/hashicorp/go-multierror v1.1.1
+	github.com/hashicorp/go-version v1.5.0 // indirect
 	go.uber.org/atomic v1.9.0
 	golang.org/x/sync v0.0.0-20220601150217-0de741cfad7f
 	google.golang.org/grpc v1.48.0
