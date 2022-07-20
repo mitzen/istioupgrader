@@ -2,7 +2,6 @@ package util
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	v1alpha3 "istio.io/client-go/pkg/apis/networking/v1alpha3"
@@ -30,21 +29,9 @@ func (i *IstioClient) New(config *rest.Config, ns string) {
 	i.ns = ns
 }
 
-func (i *IstioClient) GetVersionInfo() {
-
-	fmt.Printf("Getting version: %s \n", i.istioClient.NetworkingV1alpha3().RESTClient().APIVersion().Version)
-
-	sv, err := i.istioClient.ServerVersion()
-
-	if err != nil {
-		fmt.Println("error getting istio ServerVersion")
-	}
-
-	fmt.Printf("Istio version: %s.%s \n", sv.Major, sv.Minor)
-}
-
-func (i *IstioClient) GetIstioControlVersion(ic kube.ExtendedClient, namespace string) (*version.MeshInfo, error) {
-	mvi, err := ic.GetIstioVersions(context.TODO(), namespace)
+func (i *IstioClient) GetIstioControlVersion() (*version.MeshInfo, error) {
+	cc, _ := kube.NewExtendedClient(kube.BuildClientCmd("", ""), "")
+	mvi, err := cc.GetIstioVersions(context.TODO(), "istio-system")
 	return mvi, err
 }
 
