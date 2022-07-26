@@ -16,9 +16,24 @@ func (nc *NodeClient) NewNodeClient(clientset kubernetes.Interface) {
 	nc.clientset = clientset
 }
 
-func (nc *NodeClient) Cordon(nodeList *v1.NodeList) {
+func (nc *NodeClient) DrainNode(node *v1.Node) {
+	helper := nc.createHelper()
+	drain.RunNodeDrain(&helper, node.Name)
+}
 
-	helper := drain.Helper{
+func (nc *NodeClient) Cordon(node *v1.Node) {
+	helper := nc.createHelper()
+	drain.RunCordonOrUncordon(&helper, node, false)
+}
+
+func (nc *NodeClient) UnCordon(node *v1.Node) {
+	helper := nc.createHelper()
+	drain.RunCordonOrUncordon(&helper, node, true)
+}
+
+func (nc *NodeClient) createHelper() drain.Helper {
+
+	return drain.Helper{
 		Ctx:                             context.TODO(),
 		Client:                          nc.clientset,
 		Force:                           false,
@@ -37,9 +52,5 @@ func (nc *NodeClient) Cordon(nodeList *v1.NodeList) {
 		DryRunStrategy:                  0,
 		//DryRunVerifier:                  &resource.QueryParamVerifier{},
 		//OnPodDeletedOrEvicted: func(pod *v1.Pod, usingEviction bool) {
-	}
-
-	for _, v := range nodeList.Items {
-		drain.RunCordonOrUncordon(&helper, &v, false)
 	}
 }

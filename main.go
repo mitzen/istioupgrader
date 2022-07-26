@@ -64,7 +64,7 @@ func main() {
 
 					if isRestartPodRequired {
 
-						nl, err := nsutil.ListAllNodes()
+						nodeLists, err := nsutil.ListAllNodes()
 
 						if err != nil {
 							fmt.Println("Error listing node.")
@@ -72,7 +72,12 @@ func main() {
 
 						nc := &util.NodeClient{}
 						nc.NewNodeClient(clientset)
-						nc.Cordon(nl)
+
+						for _, v := range nodeLists.Items {
+							nc.Cordon(&v)
+							nc.DrainNode(&v)
+							nc.UnCordon((&v))
+						}
 					}
 				}
 			}

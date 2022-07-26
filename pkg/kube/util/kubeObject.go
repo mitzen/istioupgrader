@@ -26,6 +26,5 @@ func (n *KubeObject) ListAllNodes() (*v1.NodeList, error) {
 }
 
 func (n *KubeObject) ListDaemonset(namespace string) (*appsv1.DaemonSetList, error) {
-
 	return n.c.AppsV1().DaemonSets(namespace).List(context.TODO(), metav1.ListOptions{})
 }
