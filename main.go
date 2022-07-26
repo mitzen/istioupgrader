@@ -26,8 +26,9 @@ func main() {
 	}
 
 	nsutil := util.KubeObject{}
+	nsutil.NewKubeObject(clientset)
 
-	namespaces, nserr := nsutil.ListAllNamespace(clientset)
+	namespaces, nserr := nsutil.ListAllNamespace()
 	if nserr != nil {
 		panic("Unable to get namespace(s) from kubernetes")
 	} else {
@@ -63,7 +64,7 @@ func main() {
 
 					if isRestartPodRequired {
 
-						nl, err := nsutil.ListAllNodes(clientset)
+						nl, err := nsutil.ListAllNodes()
 
 						if err != nil {
 							fmt.Println("Error listing node.")
@@ -72,7 +73,6 @@ func main() {
 						nc := &util.NodeClient{}
 						nc.NewNodeClient(clientset)
 						nc.Cordon(nl)
-
 					}
 				}
 			}

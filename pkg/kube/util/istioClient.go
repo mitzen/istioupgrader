@@ -6,6 +6,7 @@ import (
 	"log"
 	"strings"
 
+	"github.com/mitzen/istioupgrader/pkg/kube/config"
 	v1alpha3 "istio.io/client-go/pkg/apis/networking/v1alpha3"
 	versionedclient "istio.io/client-go/pkg/clientset/versioned"
 	"istio.io/istio/pkg/kube"
@@ -62,7 +63,7 @@ func (i *IstioClient) GetIstioPod(namespace string) string {
 	for _, v := range mvi {
 
 		for _, a := range v.Spec.Containers {
-			if strings.Contains(a.Name, "istio-proxy") {
+			if strings.Contains(a.Name, config.IstioProxyImage) {
 				ss := strings.Split(a.Image, ":")
 				istioProxyVersion := ss[len(ss)-1]
 				return istioProxyVersion
