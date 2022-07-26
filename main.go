@@ -22,56 +22,72 @@ func main() {
 	istiodVersion, err := version.NewVersion(istioControlVersion)
 
 	if err != nil || istioControlVersion == "" {
-		fmt.Printf("Unable to get istiod version from istio-system")
+		fmt.Printf("Unable to get istiod version from istio-system \n")
 	}
 
 	nsutil := util.KubeNamespace{}
+
+	nl, err := nsutil.ListAllNodes(clientset)
+	nc := &util.NodeClient{}
+
+	nc.NewNodeClient(clientset)
+	nc.Cordon(nl)
+
 	namespaces, nserr := nsutil.ListAllNamespace(clientset)
-
 	if nserr != nil {
-		fmt.Println("")
-	}
+		panic("Unable to get namespace(s) from kubernetes")
+	} else {
 
-	for _, n := range namespaces.Items {
+		for _, n := range namespaces.Items {
 
-		fmt.Println(n.Name)
+			fmt.Println(n.Name)
 
-		if n.Name == "istio-system" || n.Name == "kube-system" {
-			continue
-		}
+			if n.Name == "istio-system" || n.Name == "kube-system" {
+				continue
+			}
 
-		istioPodVersion := ic.GetIstioPod(n.Name)
+			istioPodVersion := ic.GetIstioPod(n.Name)
 
-		if istioPodVersion != "" {
+			if istioPodVersion != "" {
 
-			fmt.Printf("Istiond version: %s, IstioPod version:%s ", istioControlVersion, istioPodVersion)
+				fmt.Printf("Istiond version: %s, IstioPod version:%s ", istioControlVersion, istioPodVersion)
 
-			podIstioVersion, err := version.NewVersion(istioPodVersion)
+				podIstioVersion, err := version.NewVersion(istioPodVersion)
 
-			var isRestartPodRequired bool = false
+				var isRestartPodRequired bool = false
 
-			if err != nil {
-				fmt.Printf("Unable to istio version from pods")
-			} else {
-
-				if !istiodVersion.Equal(podIstioVersion) {
-					fmt.Printf("We need to restart pods in namespace: %s", n.Name)
-					isRestartPodRequired = true
+				if err != nil {
+					fmt.Printf("Unable to istio version from pods")
 				} else {
-					fmt.Printf("No pods restart is required for namespace: %s", n.Name)
-				}
 
-				if isRestartPodRequired {
+					if !istiodVersion.Equal(podIstioVersion) {
+						fmt.Printf("We need to restart pods in namespace: %s", n.Name)
+						isRestartPodRequired = true
+					} else {
+						fmt.Printf("No pods restart is required for namespace: %s", n.Name)
+					}
 
-					// restart pod in a namespace //
-
+					if isRestartPodRequired {
+						// restart pod in a namespace //
+					}
 				}
 			}
 		}
 	}
 
-	// deploymentsClient := clientset.AppsV1().Deployments(apiv1.NamespaceDefault)
-	// if deploymentsClient != nil {
-	// 	fmt.Println("")
-	// }
+	// 	$nodes=@(kubectl get no -o name)
+
+	// foreach ($node in $nodes) {
+
+	// Write-Host "Cordoning $node `n"
+	// kubectl cordon $node
+
+	// Write-Host "Draining $node `n"
+	// kubectl drain $node --ignore-daemonsets --delete-emptydir-data
+
+	// Write-Host "Uncordoning $node `n"
+	// kubectl uncordon $node
+
+	// Write-Host "Going to sleep"
+	// Start-Sleep -s 60
 }

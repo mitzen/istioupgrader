@@ -84,7 +84,6 @@ func (i *IstioClient) GetDesinationRules() {
 }
 
 func (i *IstioClient) initializeIstioClient() {
-
 	cc, err := kube.NewExtendedClient(kube.BuildClientCmd("", ""), "")
 
 	if err != nil {

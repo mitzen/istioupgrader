@@ -14,3 +14,7 @@ type KubeNamespace struct {
 func (n *KubeNamespace) ListAllNamespace(c *kubernetes.Clientset) (*v1.NamespaceList, error) {
 	return c.CoreV1().Namespaces().List(context.TODO(), metav1.ListOptions{})
 }
+
+func (n *KubeNamespace) ListAllNodes(c *kubernetes.Clientset) (*v1.NodeList, error) {
+	return c.CoreV1().Nodes().List(context.TODO(), metav1.ListOptions{})
+}
