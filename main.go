@@ -28,21 +28,6 @@ func main() {
 	nsutil := util.KubeObject{}
 	nsutil.NewKubeObject(clientset)
 
-	nodeLists, err := nsutil.ListAllNodes()
-
-	if err != nil {
-		fmt.Println("Error listing node.")
-	}
-
-	nc := &util.NodeClient{}
-	nc.NewNodeClient(clientset)
-
-	for _, v := range nodeLists.Items {
-		nc.Cordon(&v)
-		//nc.DrainNode(&v)
-		nc.UnCordon(&v)
-	}
-
 	namespaces, nserr := nsutil.ListAllNamespace()
 	if nserr != nil {
 		panic("Unable to get namespace(s) from kubernetes")
@@ -89,6 +74,7 @@ func main() {
 						nc.NewNodeClient(clientset)
 
 						for _, v := range nodeLists.Items {
+
 							nc.Cordon(&v)
 							nc.DrainNode(&v)
 							nc.UnCordon(&v)
