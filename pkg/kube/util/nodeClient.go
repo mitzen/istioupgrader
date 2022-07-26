@@ -23,12 +23,12 @@ func (nc *NodeClient) DrainNode(node *v1.Node) {
 
 func (nc *NodeClient) Cordon(node *v1.Node) {
 	helper := nc.createHelper()
-	drain.RunCordonOrUncordon(&helper, node, false)
+	drain.RunCordonOrUncordon(&helper, node, true)
 }
 
 func (nc *NodeClient) UnCordon(node *v1.Node) {
 	helper := nc.createHelper()
-	drain.RunCordonOrUncordon(&helper, node, true)
+	drain.RunCordonOrUncordon(&helper, node, false)
 }
 
 func (nc *NodeClient) createHelper() drain.Helper {
