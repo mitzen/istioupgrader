@@ -12,8 +12,8 @@ import (
 func main() {
 
 	cfg := config.ClientConfig{}
-	restConfig := cfg.NewConfig()
-	clientset := cfg.NewClient(restConfig)
+	restConfig := cfg.NewRestConfig()
+	clientset := cfg.NewClientSet(restConfig)
 
 	ic := util.IstioClient{}
 	ic.New(restConfig, apiv1.NamespaceAll)
@@ -25,13 +25,7 @@ func main() {
 		fmt.Printf("Unable to get istiod version from istio-system \n")
 	}
 
-	nsutil := util.KubeNamespace{}
-
-	nl, err := nsutil.ListAllNodes(clientset)
-	nc := &util.NodeClient{}
-
-	nc.NewNodeClient(clientset)
-	nc.Cordon(nl)
+	nsutil := util.KubeObject{}
 
 	namespaces, nserr := nsutil.ListAllNamespace(clientset)
 	if nserr != nil {
@@ -42,7 +36,7 @@ func main() {
 
 			fmt.Println(n.Name)
 
-			if n.Name == "istio-system" || n.Name == "kube-system" {
+			if n.Name == config.IstioSystem || n.Name == config.KubeSystem {
 				continue
 			}
 
@@ -68,7 +62,17 @@ func main() {
 					}
 
 					if isRestartPodRequired {
-						// restart pod in a namespace //
+
+						nl, err := nsutil.ListAllNodes(clientset)
+
+						if err != nil {
+							fmt.Println("Error listing node.")
+						}
+
+						nc := &util.NodeClient{}
+						nc.NewNodeClient(clientset)
+						nc.Cordon(nl)
+
 					}
 				}
 			}

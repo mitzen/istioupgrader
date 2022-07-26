@@ -8,13 +8,13 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
-type KubeNamespace struct {
+type KubeObject struct {
 }
 
-func (n *KubeNamespace) ListAllNamespace(c *kubernetes.Clientset) (*v1.NamespaceList, error) {
+func (n *KubeObject) ListAllNamespace(c *kubernetes.Clientset) (*v1.NamespaceList, error) {
 	return c.CoreV1().Namespaces().List(context.TODO(), metav1.ListOptions{})
 }
 
-func (n *KubeNamespace) ListAllNodes(c *kubernetes.Clientset) (*v1.NodeList, error) {
+func (n *KubeObject) ListAllNodes(c *kubernetes.Clientset) (*v1.NodeList, error) {
 	return c.CoreV1().Nodes().List(context.TODO(), metav1.ListOptions{})
 }

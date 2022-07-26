@@ -28,7 +28,7 @@ func (c *ClientConfig) initKubeConfig() {
 	c.kubeconfig = kubeconfig
 }
 
-func (c *ClientConfig) NewConfig() *rest.Config {
+func (c *ClientConfig) NewRestConfig() *rest.Config {
 	c.initKubeConfig()
 	config, err := clientcmd.BuildConfigFromFlags("", *c.kubeconfig)
 
@@ -38,7 +38,7 @@ func (c *ClientConfig) NewConfig() *rest.Config {
 	return config
 }
 
-func (c *ClientConfig) NewClient(config *rest.Config) *kubernetes.Clientset {
+func (c *ClientConfig) NewClientSet(config *rest.Config) *kubernetes.Clientset {
 	clientset, err := kubernetes.NewForConfig(config)
 	if err != nil {
 		panic(err)
