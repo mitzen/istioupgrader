@@ -20,11 +20,11 @@ const (
 
 type IstioClient struct {
 	istioClient         *versionedclient.Clientset
-	ns                  string
+	namespace           string
 	istioExtendedClient kube.ExtendedClient
 }
 
-func (i *IstioClient) New(config *rest.Config, ns string) {
+func (i *IstioClient) New(config *rest.Config, namespace string) {
 
 	ic, err := versionedclient.NewForConfig(config)
 
@@ -35,10 +35,11 @@ func (i *IstioClient) New(config *rest.Config, ns string) {
 	}
 
 	i.istioClient = ic
-	i.ns = ns
+	i.namespace = namespace
 }
 
 func (i *IstioClient) GetIstioControlVersion() string {
+
 	mvi, err := i.istioExtendedClient.GetIstioVersions(context.TODO(), istioSystemNamespace)
 
 	if err != nil {
@@ -54,6 +55,7 @@ func (i *IstioClient) GetIstioControlVersion() string {
 }
 
 func (i *IstioClient) GetIstioPod(namespace string) string {
+
 	mvi, err := i.istioExtendedClient.GetIstioPods(context.TODO(), namespace, map[string]string{})
 
 	if err != nil {
@@ -75,21 +77,24 @@ func (i *IstioClient) GetIstioPod(namespace string) string {
 }
 
 func (i *IstioClient) GetGateways() (*v1alpha3.GatewayList, error) {
-	return i.istioClient.NetworkingV1alpha3().Gateways(i.ns).List(context.TODO(), v1.ListOptions{})
+	return i.istioClient.NetworkingV1alpha3().Gateways(i.namespace).List(context.TODO(), v1.ListOptions{})
 }
 
 func (i *IstioClient) GetVirtualServices() {
+	i.istioClient.NetworkingV1alpha3().VirtualServices(i.namespace)
 }
 
 func (i *IstioClient) GetDesinationRules() {
+	i.istioClient.NetworkingV1alpha3().DestinationRules(i.namespace)
 }
 
 func (i *IstioClient) initializeIstioClient() {
-	cc, err := kube.NewExtendedClient(kube.BuildClientCmd("", ""), "")
+
+	client, err := kube.NewExtendedClient(kube.BuildClientCmd("", ""), "")
 
 	if err != nil {
 		fmt.Println("unable to create istio extended client")
 	}
 
-	i.istioExtendedClient = cc
+	i.istioExtendedClient = client
 }
