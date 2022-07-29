@@ -12,7 +12,12 @@ import (
 type IstioUpgrade struct {
 }
 
+// gateway + vs => no downtime migration
+// go to all namespace and check version again after drain operation
+
 func (i *IstioUpgrade) Execute() {
+
+	var dryRun bool = true
 
 	cfg := config.ClientConfig{}
 	restConfig := cfg.NewRestConfig()
@@ -36,6 +41,8 @@ func (i *IstioUpgrade) Execute() {
 		panic("Unable to get namespace(s) from kubernetes")
 	} else {
 
+		var isRestartPodRequired bool = false
+
 		for _, n := range namespaces.Items {
 
 			fmt.Println(n.Name)
@@ -52,37 +59,38 @@ func (i *IstioUpgrade) Execute() {
 
 				podIstioVersion, err := version.NewVersion(istioPodVersion)
 
-				var isRestartPodRequired bool = false
-
 				if err != nil {
 					fmt.Printf("Unable to istio version from pods")
 				} else {
 
 					if !istiodVersion.Equal(podIstioVersion) {
-						fmt.Printf("We need to restart pods in namespace: %s", n.Name)
+						fmt.Printf("Istio control plane and data plan version mismatch in namespace: %s", n.Name)
 						isRestartPodRequired = true
 					} else {
 						fmt.Printf("No pods restart is required for namespace: %s", n.Name)
 					}
+				}
+			}
+		}
 
-					if isRestartPodRequired {
+		if !dryRun {
 
-						nodeLists, err := nsutil.ListAllNodes()
+			if isRestartPodRequired {
 
-						if err != nil {
-							fmt.Println("Error listing node.")
-						}
+				nodeLists, err := nsutil.ListAllNodes()
 
-						nc := &util.NodeClient{}
-						nc.NewNodeClient(clientset)
+				if err != nil {
+					fmt.Println("Error listing node.")
+				}
 
-						for _, v := range nodeLists.Items {
+				nc := &util.NodeClient{}
+				nc.NewNodeClient(clientset)
 
-							nc.Cordon(&v)
-							nc.DrainNode(&v)
-							nc.UnCordon(&v)
-						}
-					}
+				for _, v := range nodeLists.Items {
+
+					nc.Cordon(&v)
+					nc.DrainNode(&v)
+					nc.UnCordon(&v)
 				}
 			}
 		}
