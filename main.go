@@ -1,11 +1,7 @@
 package main
 
-import (
-	"github.com/mitzen/istioupgrader/pkg/feature"
-)
+import "github.com/mitzen/istioupgrader/cmd/upgrader"
 
 func main() {
-
-	istioUpgrader := feature.IstioUpgrade{}
-	istioUpgrader.Execute()
+	upgrader.Execute()
 }

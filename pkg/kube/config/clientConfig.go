@@ -13,7 +13,7 @@ import (
 )
 
 type ClientConfig struct {
-	kubeconfig *string
+	Kubeconfig *string
 }
 
 func (c *ClientConfig) initKubeConfig() {
@@ -25,12 +25,12 @@ func (c *ClientConfig) initKubeConfig() {
 	}
 
 	flag.Parse()
-	c.kubeconfig = kubeconfig
+	c.Kubeconfig = kubeconfig
 }
 
 func (c *ClientConfig) NewRestConfig() *rest.Config {
 	c.initKubeConfig()
-	config, err := clientcmd.BuildConfigFromFlags("", *c.kubeconfig)
+	config, err := clientcmd.BuildConfigFromFlags("", *c.Kubeconfig)
 
 	if err != nil {
 		panic(err)
@@ -48,6 +48,6 @@ func (c *ClientConfig) NewClientSet(config *rest.Config) *kubernetes.Clientset {
 
 func (c *ClientConfig) NewExtendedClient(config *rest.Config) (kube.ExtendedClient, error) {
 	c.initKubeConfig()
-	cc, err := kube.NewExtendedClient(kube.BuildClientCmd(*c.kubeconfig, ""), "")
+	cc, err := kube.NewExtendedClient(kube.BuildClientCmd(*c.Kubeconfig, ""), "")
 	return cc, err
 }

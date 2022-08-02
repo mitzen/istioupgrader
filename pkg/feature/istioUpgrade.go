@@ -6,12 +6,19 @@ import (
 	"github.com/hashicorp/go-version"
 	"github.com/mitzen/istioupgrader/pkg/kube/config"
 	"github.com/mitzen/istioupgrader/pkg/kube/util"
+	"github.com/spf13/cobra"
 	apiv1 "k8s.io/api/core/v1"
 )
 
 type IstioUpgrade struct {
+	Namespace                     string
+	UpgradeType                   string
+	VersionSelected               string
+	isPreflightUpgradeCheckPassed bool
+	Cmd                           *cobra.Command
 }
 
+// Running precheck tset first
 // gateway + vs => no downtime migration
 // go to all namespace and check version again after drain operation
 
@@ -25,6 +32,8 @@ func (i *IstioUpgrade) Execute() {
 
 	ic := util.IstioClient{}
 	ic.New(restConfig, apiv1.NamespaceAll)
+
+	//Precheck(ic.IstioExtendedClient, i.Namespace, i.Cmd, *cfg.Kubeconfig, "")
 
 	istioControlVersion := ic.GetIstioControlVersion()
 	istiodVersion, err := version.NewVersion(istioControlVersion)
