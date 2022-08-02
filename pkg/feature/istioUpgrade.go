@@ -18,7 +18,7 @@ type IstioUpgrade struct {
 	Cmd                           *cobra.Command
 }
 
-// Running precheck tset first
+// Running precheck test first
 // gateway + vs => no downtime migration
 // go to all namespace and check version again after drain operation
 
@@ -31,9 +31,9 @@ func (i *IstioUpgrade) Execute() {
 	clientset := cfg.NewClientSet(restConfig)
 
 	ic := util.IstioClient{}
-	ic.New(restConfig, apiv1.NamespaceAll)
+	ic.NewIstioClient(restConfig, apiv1.NamespaceAll)
 
-	//Precheck(ic.IstioExtendedClient, i.Namespace, i.Cmd, *cfg.Kubeconfig, "")
+	Precheck(ic.IstioExtendedClient, i.Namespace, i.Cmd, *cfg.Kubeconfig, "")
 
 	istioControlVersion := ic.GetIstioControlVersion()
 	istiodVersion, err := version.NewVersion(istioControlVersion)

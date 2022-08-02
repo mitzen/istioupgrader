@@ -9,16 +9,15 @@ import (
 	"strings"
 	"time"
 
+	adminapi "github.com/envoyproxy/go-control-plane/envoy/admin/v3"
 	cluster "github.com/envoyproxy/go-control-plane/envoy/config/cluster/v3"
 	"github.com/fatih/color"
+	"github.com/spf13/cobra"
 	"golang.org/x/sync/errgroup"
 	"golang.org/x/sync/semaphore"
+	authorizationapi "k8s.io/api/authorization/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	adminapi "github.com/envoyproxy/go-control-plane/envoy/admin/v3"
-	authorizationapi "k8s.io/api/authorization/v1"
-
-	"github.com/spf13/cobra"
 	"istio.io/istio/istioctl/pkg/install/k8sversion"
 	"istio.io/istio/istioctl/pkg/util/formatting"
 	"istio.io/istio/pilot/pkg/model"

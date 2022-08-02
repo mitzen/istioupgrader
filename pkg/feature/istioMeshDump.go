@@ -15,7 +15,7 @@ func (i *IstioMeshDump) Execute(namespace string) {
 	restConfig := cfg.NewRestConfig()
 
 	ic := util.IstioClient{}
-	ic.New(restConfig, namespace)
+	ic.NewIstioClient(restConfig, namespace)
 
 	// dump istio routing information //
 	// gs, vs, dr

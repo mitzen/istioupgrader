@@ -24,7 +24,7 @@ type IstioClient struct {
 	IstioExtendedClient kube.ExtendedClient
 }
 
-func (i *IstioClient) New(config *rest.Config, namespace string) {
+func (i *IstioClient) NewIstioClient(config *rest.Config, namespace string) {
 
 	ic, err := versionedclient.NewForConfig(config)
 
